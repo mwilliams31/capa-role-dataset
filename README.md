@@ -59,7 +59,12 @@ After identifying a candidate sample, the sample's hash was looked up on the fol
 * [capa-testfiles repository](https://github.com/mandiant/capa-testfiles)
 * [Virus.exchange](https://virus.exchange/) (requires registration)
 
-If a candidate sample was found on any of the above sites, it was downloaded and its capa results were collected and added to dataset using the [`generate_capa_json.py` script](/scripts/generate_capa_json.py). Note, the actual samples are _not_ part of the dataset. Collected capa results were generated using [capa version `7.4.0`](https://github.com/mandiant/capa/releases/tag/v7.4.0).
+If a candidate sample was found on any of the above sites, it was downloaded and utilized to build this dataset. Note, the actual samples are _not_ part of the dataset. For each downloaded sample, capa results were generated using the [`generate_capa_json.py` script](/scripts/generate_capa_json.py) and the [capa version `7.4.0`](https://github.com/mandiant/capa/releases/tag/v7.4.0) binary. The JSON results were parsed using the [`generate_dataset_files.py` script](/scripts/generate_dataset_files.py), which generates the following files found in the [`dataset` directory](/dataset/):
+
+* [samples.csv](/dataset/samples.csv) - a matrix that lists each sample's SHA256 hash and capa rule hits
+* [rule_ids.csv](/dataset/rule_ids.csv) - mapping of rule IDs to their rule namespace and name
+
+An additional CSV file named [sample_roles.csv](/dataset/sample_roles.csv) completes the dataset. It contains the role label assigned to each sample based on the review of open-source intelligence reports.
 
 ### Limitations
 Without access to a tool such as [VirusTotal Intelligence](https://www.virustotal.com/gui/intelligence-overview), identifying and collecting malware samples with documented role labels proved time-consuming and difficult. As a result, the sample size for this dataset is quite small at 58 samples, with a minimum of 5 samples for each of the 11 roles.
