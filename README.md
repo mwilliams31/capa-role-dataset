@@ -91,9 +91,10 @@ The table below contains high-level descriptions for each _role_ label represent
 | **Wiper**             | Deletes or destroys data or systems.                                        |
 
 ## Dataset Tools
-The [`scripts`](scripts) directory contains the following:
-  * Script used to the generate capa results
-  * Script that generates dataset files based on the raw capa results
+The [`scripts`](/scripts) directory contains the following scripts used to create the dataset:
+
+* `generate_capa_json.py` - generate capa results for samples in a directory
+* `generate_dataset_files.py` - parse the capa output and create two CSV files (`rule_ids.csv` and `samples.csv`)
 
 ## Exploratory Data Analysis
 The [data_exploration.ipynb](/dataset/data_exploration.ipynb) Jupyter notebook contains the full results of data exploration. Here are some key takeaways:

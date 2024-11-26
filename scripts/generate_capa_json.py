@@ -1,4 +1,3 @@
-
 """
 This script processes sample files in a specified directory using the capa tool and generates JSON output files.
 In order for generate_dataset_files.py to work as expected, sample files should be named using their SHA256 hash value.
