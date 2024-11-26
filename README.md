@@ -3,24 +3,25 @@
 ## Executive Summary
 Malware reverse engineers are commonly tasked with determining a sample’s capabilities and purpose. Fortunately, a tool named [`capa`](https://github.com/mandiant/capa) can automatically identify capabilities by analyzing a sample’s characteristics, code, and behavior. However, interpreting `capa` results may be difficult for those not well-versed in malware behavior. In some cases, an analyst may be less interested in individual capabilities and simply want to determine a sample’s primary functionality, or _role_. Example roles include backdoor, credential stealer, and ransomware. The motivation behind this dataset is to collect `capa` results for samples with various roles so that a machine-learning model can be trained to determine the likely role for a given sample based on its `capa` results.
 
-What sets this dataset apart from the datasets highlighted below (and others) is its focus on determining a malware sample's role, as opposed to labeling a malware family or determining if a file is malicious based on static features or dynamic behavior. There also does not appear to be a publicly available datasets centered around `capa` results.
+What sets this dataset apart from the datasets highlighted below (and others) is its focus on determining a malware sample's role, as opposed to labeling a malware family or determining if a file is malicious based on static features or dynamic behavior. There also does not appear to be a publicly available dataset centered around `capa` results.
 
 ## Navigating This Repository
 After reviewing the documentation below, use the following folders to navigate the repository:
-* [`scripts`](scripts)
+* The [`scripts`](scripts) directory contains:
   * Script used to the generate capa results
   * Script that generates dataset files based on the raw capa results
-* [`dataset`](dataset)
+* The [`dataset`](dataset) directory contains:
   * Raw dataset files
   * Raw CAPA results
   * Jupyter notebook that explores the dataset
+  * Additional metadata for each of the samples in the dataset
 
 ## Notable Malware Analysis Datasets
 The datasets listed below were created to aid malware analysis and detection research.
 * [Avast-CTU Public CAPEv2 Dataset](https://github.com/avast/avast-ctu-cape-dataset)
   * Contains [CAPEv2 sandbox](https://capev2.readthedocs.io/en/latest/) reports for 48,976 malicious files.
   * Enables researchers to train on _dynamic_ analysis results rather than _static_.
-  * Samples labeled using one of six total malware "types" (`"banker", "trojan", "pws", "coinminer", "rat", "keylogger"`) and one of ten malware families.
+  * Samples labeled using one of six malware "types" (`"banker", "trojan", "pws", "coinminer", "rat", "keylogger"`) and one of ten malware families.
     * "Types" align with "roles" in the current dataset. 
 * [Elastic Malware Benchmark for Empowering Researchers (EMBER)](https://github.com/elastic/ember)
   * Includes static features extracted from 1.1M Windows PE files scanned in or before 2018.
@@ -63,16 +64,16 @@ If a candidate sample was found on any of the above sites, it was downloaded and
 ### Limitations
 Without access to a tool such as [VirusTotal Intelligence](https://www.virustotal.com/gui/intelligence-overview), identifying and collecting malware samples with documented role labels proved time-consuming and difficult. As a result, the sample size for this dataset is quite small at 58 samples, with a minimum of 5 samples for each of the 11 roles.
 
-Another issue was the fact that numerous candidate samples were packed or heavily obfuscated. As a result, these samples often produces zero or few capa hits. Fortunately, capa now supports [extracting capabilities from sandbox runs](https://cloud.google.com/blog/topics/threat-intelligence/dynamic-capa-executable-behavior-cape-sandbox), but a CAPE instance was not created in the interest of time.
+Another issue was the fact that numerous candidate samples were packed or heavily obfuscated. As a result, these samples often produced zero or few capa hits. Fortunately, capa now supports [extracting capabilities from sandbox runs](https://cloud.google.com/blog/topics/threat-intelligence/dynamic-capa-executable-behavior-cape-sandbox), but a CAPE instance was not created in the interest of time.
 
-Finally, the dataset does not address every possible malware role. For example, coinminers are not represented in this dataset. The role that _were_ selected (see the table below) hopefully represent a large portion of the malware encountered in the present day.
+Finally, the dataset does not address every possible malware role. For example, coinminers are not represented in this dataset. The roles that _were_ selected (see the table below) hopefully represent a large portion of the malware encountered in the present day.
 
 ### Roles
 The table below contains high-level descriptions for each _role_ label represented in the dataset:
 
 | Role                  | Description                                                                 |
 |-----------------------|-----------------------------------------------------------------------------|
-| **Backdoor**          | Provides a threat actor with interactive control over an infected system.   |
+| **Backdoor**          | Provides a threat actor with interactive control over a system.   |
 | **Downloader**        | Downloads, and likely executes, an additional malicious payload.           |
 | **Dropper**           | Writes an embedded payload to the filesystem and likely executes it.        |
 | **Dropper (memory-only)** | Executes an embedded payload in memory.                                    |
@@ -94,7 +95,7 @@ The [data_exploration.ipynb](/dataset/data_exploration.ipynb) Jupyter notebook c
 
 * 319 capabilities were identified across 58 samples.
 * Removing 31 inconsequential capabilities using domain knowledge and collapsing the remaining capabilities into their namespace reduced the feature set from 319 to 162.
-  * Namespaces are the parent folder of each rule within the [`capa-rules` repository](https://github.com/mandiant/capa-rules). They act as a de facto categories that contains one or more rules.
+  * Namespaces are the parent folder of each rule within the [`capa-rules` repository](https://github.com/mandiant/capa-rules). They act as a de facto category that contains one or more rules.
 * Here are the top 10 selected namespaces based on chi-squared scores:
 
 | Namespace                            |   Score |
@@ -211,7 +212,7 @@ Role: keylogger
 | host-interaction/clipboard           |    0.0477662 |
 | host-interaction/file-system/delete  |    0.037909  |
 
-Most, if not all, of the selected features make sense for the given role. Not only do the five features make sense, but so do the relative importance in many cases. For example:
+Most, if not all, of the selected features make sense for the given role. Their relative importance is also reasonable in most cases. For example:
 * The `host-interaction/driver` namespace scored well above the rest for rootkits.
 * The `impact/inhibit-system-recovery` namespace scored well above the rest for ransomware.
 * The `impact/wipe-disk` namespace scored well above the rest for wipers.
